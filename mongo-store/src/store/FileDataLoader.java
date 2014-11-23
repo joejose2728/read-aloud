@@ -45,7 +45,7 @@ public class FileDataLoader implements IDataLoader{
 	@Override
 	public void loadBooksFromFiles(BufferedReader[] readers) {
 		db = mongoClient.getDB(Constants.DB_DATABASE);
-		coll = db.getCollection(Constants.DB_COLLECTION);
+		coll = db.getCollection(Constants.COLLECTION_BOOKS);
 		bwo = coll.initializeUnorderedBulkOperation();
 		
 		int batchSize = 10;
