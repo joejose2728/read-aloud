@@ -35,6 +35,7 @@ public interface Constants {
 	String ATTR_USER_ID = "userId";
 	String ATTR_NAME = "name";
 	String ATTR_RECOMMENDATION = "recommendations";
+	String DOC_CLUB = "club";
 	
 	
 	// Resources
