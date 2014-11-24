@@ -16,12 +16,12 @@ public interface Constants {
 	String DB_HOST = "localhost";
 	int DB_PORT = 27017;
 	String DB_DATABASE = "readaloud";
+	
 	String COLLECTION_BOOKS = "books";
 	String COLLECTION_USERS = "users";
 	String COLLECTION_BOOK_CLUBS = "bookClubs";
-	String DOC_BOOK = "book";
-	String DOC_USER = "user";
-	String DOC_BOOK_CLUB = "bookClub";
+	
+	// Collection: books
 	String ATTR_TITLE = "title";
 	String ATTR_AUTHOR = "author";
 	String ATTR_RELEASE_DATE = "releaseDate";
@@ -30,12 +30,29 @@ public interface Constants {
 	String ATTR_LAST_UPDATED = "lastUpdated";
 	String ATTR_TRANSLATOR = "translator";
 	String ATTR_CHARSET_ENCODING = "characterSetEncoding";
-	String ATTR_TEXT = "text";
+	
+	// Only in Normal schema
+	String ATTR_CONTENT = "content";
+	String ATTR_PAGE = "page";
+	String ATTR_PAGE_NUMBER = "pageNumber";
+	String ATTR_PAGE_COUNT = "pageCount";
+	
+	// Only in GridFS
+	String ATTR_FILE_NAME = "fileName";
+	
+	// Common
 	String ATTR_UPLOADED_BY = "uploadedBy";
+	String ATTR_COMMENTS = "comments";
 	String ATTR_USER_ID = "userId";
-	String ATTR_NAME = "name";
-	String ATTR_RECOMMENDATION = "recommendations";
-	String DOC_CLUB = "club";
+	String ATTR_COMMENT = "comment";
+	
+	// Collection: users
+	String ATTR_USER_NAME = "userName";
+	String ATTR_RECOMMENDATIONS = "recommendations";
+
+	// Collection: bookClubs
+	String ATTR_CLUB_NAME = "clubName";
+	String ATTR_CLUB_MEMBERS = "clubMembers";
 	
 	
 	// Resources

@@ -1,5 +1,7 @@
 package util;
 
+import interfaces.Constants;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,19 +10,33 @@ import com.mongodb.BasicDBObject;
 
 public class BookParser {
 	
+	// the number of lines to search for meta-data
 	private final int metadataLines = 80;
 	
-	// we split the book into segments while storing.
-	// number of lines in each segment
-	private final int segmentSize = 200; 
+	// we split the book into pages while storing.
+	// number of lines in each page
+	private final int pageSize = 200; 
 	
 	// indexes of the searchStrings and the corresponding database keys match 
-	private final String[] searchStrings = new String[] { "Title:", "Author:",
-			"Release Date:", "Language:", "Posting Date:", "Last updated:",
-			"Translator:", "Character set encoding:" };
-	private final String[] keys = new String[] { "title", "author",
-			"releaseDate", "language", "postingDate", "lastUpdated",
-			"translator", "characterSetEncoding", "text", "segments" };
+	private final String[] searchStrings = new String[] { 
+			Constants.TITLE,
+			Constants.AUTHOR, 
+			Constants.RELEASE_DATE, 
+			Constants.LANGUAGE,
+			Constants.POSTING_DATE, 
+			Constants.LAST_UPDATED,
+			Constants.TRANSLATOR, 
+			Constants.CHARACTER_SET_ENCODING };
+	
+	private final String[] keys = new String[] { 
+			Constants.ATTR_TITLE,
+			Constants.ATTR_AUTHOR, 
+			Constants.ATTR_RELEASE_DATE,
+			Constants.ATTR_LANGUAGE, 
+			Constants.ATTR_POSTING_DATE,
+			Constants.ATTR_LAST_UPDATED, 
+			Constants.ATTR_TRANSLATOR,
+			Constants.ATTR_CHARSET_ENCODING };
 	
 	/**
 	 * Given a file, Returns a BasicDBObject ready to be put into the database.
@@ -28,16 +44,16 @@ public class BookParser {
 	public BasicDBObject parseFile(BufferedReader reader) {
 		BasicDBObject book = new BasicDBObject();
 		String line, value;
-		ArrayList<String> text = new ArrayList<String>();
-		String segment = "";
+		ArrayList<BasicDBObject> content = new ArrayList<BasicDBObject>();
+		StringBuilder page = new StringBuilder();
 		
-		int n = 0;
+		int pos = 0; // position in file
+		int pagePos = 0; // position within a page
 		int foundAt = 0;
 		
 		try {
 			while((line=reader.readLine()) != null) {
-				n++;
-				if (n < metadataLines) {
+				if (pos < metadataLines) {
 					// Extract any meta data present in this line
 					for (int i = 0; i < searchStrings.length; i++) {
 						if ((foundAt=line.indexOf(searchStrings[i])) != -1) {
@@ -51,31 +67,41 @@ public class BookParser {
 					}
 				}
 				
-				if (n < segmentSize) {
-					// append to segment
-					segment = segment + line + "\n";
+				if (pagePos < pageSize) {
+					// append to page
+					page.append(line);
+					page.append("\n");
 				}
 				else {
-					// add segment to text array-list
-					text.add(segment);
-					// reset segment and n
-					segment = "";
-					n = 0;
+					// add page to content array-list
+					content.add(new BasicDBObject(Constants.ATTR_PAGE, page.toString()));
+					// reset page and n
+					page = page.delete(0, page.length());
+					pagePos = 0;
+					// add the current line to the new page
+					page.append(line);
+					page.append("\n");
 				}
+				pos++;
+				pagePos++;
 			}
-			// add any remaining segment
-			text.add(segment);
+			// add any remaining page
+			content.add(new BasicDBObject(Constants.ATTR_PAGE, page.toString()));
 			
-			// finally, add the text and segments field to the book
-			book.append("text", text.toArray());
-			book.append("segments", text.size());
+			// add the page numbers
+			int pageCounter = 1;
+			for (BasicDBObject basicDBObject : content) {
+				basicDBObject.append(Constants.ATTR_PAGE_NUMBER, pageCounter);
+				pageCounter++;
+			}
 			
-			text.clear();
-			
+			// finally, add the content and pageCount field to the book
+			book.append(Constants.ATTR_CONTENT, content);
+			book.append(Constants.ATTR_PAGE_COUNT, content.size());
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 		return book;
 	}
 
