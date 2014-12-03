@@ -1,4 +1,10 @@
 /target
 .project
 /.settings
+/.metadata
+/.recommenders
+.DS_Store
+*.class
+*.txt
+.project
 .classpath
