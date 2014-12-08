@@ -40,8 +40,9 @@ public class BookParser {
 	
 	/**
 	 * Given a file, Returns a BasicDBObject ready to be put into the database.
+	 * Metadata flag determines if metadata at top of file will be parsed
 	 */
-	public BasicDBObject parseFile(BufferedReader reader) {
+	public BasicDBObject parseFile(BufferedReader reader, boolean metadata) {
 		BasicDBObject book = new BasicDBObject();
 		String line, value;
 		ArrayList<BasicDBObject> content = new ArrayList<BasicDBObject>();
@@ -53,7 +54,7 @@ public class BookParser {
 		
 		try {
 			while((line=reader.readLine()) != null) {
-				if (pos < metadataLines) {
+				if (pos < metadataLines && metadata) {
 					// Extract any meta data present in this line
 					for (int i = 0; i < searchStrings.length; i++) {
 						if ((foundAt=line.indexOf(searchStrings[i])) != -1) {

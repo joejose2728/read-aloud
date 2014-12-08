@@ -25,7 +25,7 @@ public class FileDataLoader implements IDataLoader{
 		init();
 	}
 	
-	public void init() {
+	private void init() {
 		try {
 			// TODO connect to DB here to check early if its up, rather than
 			// finding out after loading the files
@@ -43,7 +43,7 @@ public class FileDataLoader implements IDataLoader{
 	}
 
 	@Override
-	public void loadBooksFromFiles(BufferedReader[] readers) {
+	public void loadBooksFromFiles(BufferedReader[] readers, boolean metadata) {
 		db = mongoClient.getDB(Constants.DB_DATABASE);
 		coll = db.getCollection(Constants.COLLECTION_BOOKS);
 		bwo = coll.initializeUnorderedBulkOperation();
@@ -56,7 +56,7 @@ public class FileDataLoader implements IDataLoader{
 		for (int i = 0; i < readers.length; i++) {
 			// reusing fixed size array of objects
 			n = i % batchSize;
-			books[n] = parser.parseFile(readers[i]);
+			books[n] = parser.parseFile(readers[i], metadata);
 			bwo.insert(books[n]); // adding to batch
 			
 			if (n == batchSize - 1) {
@@ -72,5 +72,4 @@ public class FileDataLoader implements IDataLoader{
 		mongoClient.close();
 	}
 	
-
 }
