@@ -3,13 +3,13 @@ package app;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
-import store.ReadAloudStore;
+import store.ReadAloudGridFSStore;
 
-public class ReadAloudPrintClient {
+public class ReadAloudGridFSPrintClient {
 	
 	public static void main(String[] args) {
 		String bookAbsoluteFilePath, title, author, comment, clubName, query, userName, host;
-		int queryNumber, pageNumber, port;
+		int queryNumber, chunkNumber, port;
 		boolean metadata;
 		PrintWriter pw = new PrintWriter(System.out);
 		
@@ -18,13 +18,13 @@ public class ReadAloudPrintClient {
 		System.out.print("\nConnection details: \n");
 		System.out.print("userName: ");
 		userName = s.nextLine();
-		System.out.print("host(localhost): ");
+		System.out.print("host(enter localhost if not known): ");
 		host = s.nextLine();
-		System.out.print("port(27017): ");
+		System.out.print("port(enter 27017 if not known): ");
 		port = s.nextInt();
 		s.nextLine(); // skip \n not consumed by nextInt
 		
-		ReadAloudStore ras = new ReadAloudStore(userName, host, port);
+		ReadAloudGridFSStore ras = new ReadAloudGridFSStore(userName, host, port);
 		System.out.println("Logged in to Readaloud Social Literacy Cloud as: " + userName + "\n");
 		
 		// Perform queries
@@ -57,16 +57,16 @@ public class ReadAloudPrintClient {
 					break;
 					
 				case 3:
-					System.out.print("Get Book with page number: \n");
+					System.out.print("Get Book with chunk number: \n");
 					System.out.print("Enter Title: ");
 					title = s.nextLine();
-					System.out.print("Enter Page Number: ");
-					pageNumber = s.nextInt();
+					System.out.print("Enter Chunk Number: ");
+					chunkNumber = s.nextInt();
 					s.nextLine();
 					System.out.print("Need book metadata? (true/false): ");
 					metadata = s.nextBoolean();
 					s.nextLine();
-					pw.print(ras.getBookWithPageNumber(title, pageNumber, metadata));
+					pw.print(ras.getBookWithChunkNumber(title, chunkNumber, metadata));
 					pw.flush();
 					System.out.print("\n DONE \n");
 					break;
@@ -105,13 +105,13 @@ public class ReadAloudPrintClient {
 					System.out.print("\n DONE \n");
 					break;
 					
-				case 8:
-					System.out.print("Search for books containing: \n");
-					System.out.print("Enter query: ");
-					query = s.nextLine();
-					System.out.print(ras.search(query));
-					System.out.print("\n DONE \n");
-					break;
+//				case 8:
+//					System.out.print("Search for books containing: \n");
+//					System.out.print("Enter query: ");
+//					query = s.nextLine();
+//					System.out.print(ras.search(query));
+//					System.out.print("\n DONE \n");
+//					break;
 					
 				default:
 					System.out.print("\n Invalid query number \n");
@@ -130,13 +130,14 @@ public class ReadAloudPrintClient {
 		System.out.print("USAGE: \n");
 		System.out.print("1. putBook\n");
 		System.out.print("2. getBook\n");
-		System.out.print("3. getBookWithPageNumber\n");
+		System.out.print("3. getBookWithChunkNumber\n");
 		System.out.print("4. addCommentToBook\n");
 		System.out.print("5. getCommentsOnBook\n");
 		System.out.print("6. addBookClub\n");
 		System.out.print("7. joinBookClub\n");
-		System.out.print("8. search\n");
+		//System.out.print("8. search\n");
 		System.out.print("-------------------------------- \n");
 	}
+
 
 }

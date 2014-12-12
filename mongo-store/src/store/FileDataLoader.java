@@ -4,7 +4,12 @@ import interfaces.Constants;
 import interfaces.IDataLoader;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.net.UnknownHostException;
+
+import org.bson.types.ObjectId;
 
 import util.BookParser;
 
@@ -13,6 +18,8 @@ import com.mongodb.BulkWriteOperation;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
+import com.mongodb.gridfs.GridFS;
+import com.mongodb.gridfs.GridFSInputFile;
 
 public class FileDataLoader implements IDataLoader{
 	
@@ -20,6 +27,7 @@ public class FileDataLoader implements IDataLoader{
 	private DB db;
 	private DBCollection coll;
 	private BulkWriteOperation bwo;
+	private GridFS gfs;
 	
 	public FileDataLoader() {
 		init();
@@ -64,6 +72,34 @@ public class FileDataLoader implements IDataLoader{
 			}
 		}
 		bwo.execute(); // any remaining operations
+		close();
+	}
+	
+	@Override
+	public void loadBooksFromFilesIntoGridFS(String[] filePaths, boolean metadata) {
+		db = mongoClient.getDB(Constants.DB_DATABASE);
+		coll = db.getCollection(Constants.COLLECTION_BOOKS);
+		gfs = new GridFS(db);
+		
+		BookParser parser = new BookParser();
+		ObjectId fileRef = new ObjectId();
+		for (int i = 0; i < filePaths.length; i++) {
+			try {
+				GridFSInputFile in = gfs.createFile(new File(filePaths[i]));
+				in.setChunkSize(16 * 1024); // 16KB chunk size
+				in.setContentType("text/plain");
+				in.save();
+				fileRef = (ObjectId)in.getId();
+				BufferedReader reader = new BufferedReader(new FileReader(filePaths[i]));
+				BasicDBObject bdo = new BasicDBObject();
+				if(metadata) bdo = parser.parseOnlyFileMetadata(reader);
+				bdo.append(Constants.ATTR_FILE_REF, fileRef);
+				coll.insert(bdo);
+				reader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		close();
 	}
 

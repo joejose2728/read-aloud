@@ -38,7 +38,7 @@ public interface Constants {
 	String ATTR_PAGE_COUNT = "pageCount";
 	
 	// Only in GridFS
-	String ATTR_FILE_NAME = "fileName";
+	String ATTR_FILE_REF = "fileRef";
 	
 	// Common
 	String ATTR_UPLOADED_BY = "uploadedBy";

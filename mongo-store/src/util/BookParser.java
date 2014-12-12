@@ -105,5 +105,39 @@ public class BookParser {
 		
 		return book;
 	}
+	
+	/*
+	 * Given a file, returns a BasicDBObject ready to be put into the database with metadata only
+	 * Used for GridFS, as we do not need to parse the book content in that case.
+	 */
+	public BasicDBObject parseOnlyFileMetadata(BufferedReader reader) {
+		BasicDBObject book = new BasicDBObject();
+		String line, value;
+		int pos = 0; // position in file
+		int foundAt = 0;
+		
+		try {
+			while((line=reader.readLine()) != null) {
+				if (pos < metadataLines) {
+					// Extract any meta data present in this line
+					for (int i = 0; i < searchStrings.length; i++) {
+						if ((foundAt=line.indexOf(searchStrings[i])) != -1) {
+							// If value found, then extract it and break
+							// TODO more accurate value extraction, dates rather
+							// than strings
+							value = line.substring(
+									foundAt + searchStrings[i].length()).trim();
+							book.append(keys[i], value);
+						}
+					}
+				}
+			pos++;
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return book;
+	}
 
 }
