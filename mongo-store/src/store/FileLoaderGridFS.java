@@ -25,7 +25,7 @@ public class FileLoaderGridFS implements IDataLoader{
 	}
 	
 	@Override
-	public void loadBooksFromFiles(BufferedReader[] readers) {
+	public void loadBooksFromFiles(BufferedReader[] readers, boolean metadata) {
 		// TODO Auto-generated method stub
 		
 		

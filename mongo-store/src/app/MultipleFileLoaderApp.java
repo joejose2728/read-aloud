@@ -10,6 +10,9 @@ import java.io.IOException;
 
 import store.FileDataLoader;
 
+/*
+ * To load Project Gutenberg books
+ */
 public class MultipleFileLoaderApp {
 	
 	public static void main(String[] args)
@@ -35,7 +38,7 @@ public class MultipleFileLoaderApp {
 			
 			// pass the readers pointing to all the files in the directory to
 			// the data loader
-			fdl.loadBooksFromFiles(readers);
+			fdl.loadBooksFromFiles(readers, true);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
