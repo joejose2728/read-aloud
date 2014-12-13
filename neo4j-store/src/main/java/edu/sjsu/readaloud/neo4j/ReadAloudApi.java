@@ -64,4 +64,11 @@ public class ReadAloudApi {
 			Neo4JUtil.createRelationship(bookUri, pageUri, "CONTAINS", "{\"pageNum\": " + pageNo++ +" }");
 		}
 	}
+	
+	public void addComment(URI bookUri, String comment) throws URISyntaxException{
+		URI commentUri = Neo4JUtil.createNode();
+		Neo4JUtil.addProperty(commentUri, Constants.ATTR_COMMENT, comment);
+		Neo4JUtil.addLabel(commentUri, "Comment");
+		Neo4JUtil.createRelationship(bookUri, commentUri, "HAS", "{}");
+	}
 }
